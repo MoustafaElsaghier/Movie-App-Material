@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00AA8D</color>
+    <color name="colorPrimaryDark">#008975</color>
+    <color name="colorAccent">#00BF9A</color>
+    <!--<color name="ratingColor">#00d0ff</color>-->
+    <color name="movieTittle">#777</color>
+    <color name="textColor">#444</color>
+    <color name="cardBackGround">#FFF</color>
+</resources>
