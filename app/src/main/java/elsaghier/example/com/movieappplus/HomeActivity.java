@@ -1,8 +1,12 @@
 package elsaghier.example.com.movieappplus;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,9 +21,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import elsaghier.example.com.movieappplus.Adapters.FilmCursorAdapter;
 import elsaghier.example.com.movieappplus.Adapters.HomeAdapter;
 import elsaghier.example.com.movieappplus.ApiWork.ApiClient;
 import elsaghier.example.com.movieappplus.ApiWork.MovieInterFace;
+import elsaghier.example.com.movieappplus.DataBase.FilmContract;
 import elsaghier.example.com.movieappplus.DataBase.MyDBHelper;
 import elsaghier.example.com.movieappplus.Model.Film;
 import elsaghier.example.com.movieappplus.Model.FilmsResponse;
@@ -28,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
     RecyclerView recyclerView;
     HomeAdapter homeAdapter;
     RecyclerView.LayoutManager recyclerViewLayoutManager;
@@ -39,6 +45,8 @@ public class HomeActivity extends AppCompatActivity
     static List<Film> favouriteFilms;
     Call<FilmsResponse> call;
     TextView ErrorMessages;
+
+    FilmCursorAdapter filmCursorAdapter;
 
 
     @Override
@@ -190,4 +198,25 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        return new CursorLoader(this,
+                FilmContract.FilmEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        filmCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        filmCursorAdapter.swapCursor(null);
+
+    }
 }

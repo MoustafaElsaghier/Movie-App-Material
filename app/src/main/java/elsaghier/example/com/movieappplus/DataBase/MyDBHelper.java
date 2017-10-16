@@ -12,10 +12,44 @@ import java.util.List;
 import elsaghier.example.com.movieappplus.Model.Film;
 
 
+
 public class MyDBHelper extends SQLiteOpenHelper {
+
+    //name & version
+    private static final String DATABASE_NAME = "myMovies";
+    private static final int DATABASE_VERSION = 1;
+
+    private static final String SQL_CREATE_MOVIE_TABLE = "Create Table " + FilmContract.FilmEntry.filmTableName + "(" + FilmContract.FilmEntry.id + " Text PRIMARY KEY" +
+            ", " + FilmContract.FilmEntry.imgUrl + " Text ," + FilmContract.FilmEntry.overview + " Text ," +
+            FilmContract.FilmEntry.original_title + " Text, " + FilmContract.FilmEntry.vote_average + " Text , " + FilmContract.FilmEntry.Generes + " Text , " +
+            FilmContract.FilmEntry.release_date + " Text ," + FilmContract.FilmEntry.backdrop_path + " Text ," + FilmContract.FilmEntry.isSelected + " Text)";
+
+
+    public MyDBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
+
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + filmTableName);
+        sqLiteDatabase.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
+                filmTableName + "'");
+
+        // re-create database
+        onCreate(sqLiteDatabase);
+
+    }
+
     private static String db_name = "myMovies";
     private static int dateBase_Version = 1;
-    private static String filmTableName = "Movies";
+    public static String filmTableName = "Movies";
     public static String id = "id";
     private static String imgUrl = "poster_path";
     private static String overview = "overview";
@@ -27,84 +61,29 @@ public class MyDBHelper extends SQLiteOpenHelper {
     private static String Generes = "Generes";
     private SQLiteDatabase db;
 
-
-    private String createTableFilm = "Create Table " + filmTableName + "(" + id + " Text PRIMARY KEY" +
-            ", " + imgUrl + " Text ," + overview + " Text ," +
-            original_title + " Text, " + vote_average + " Text , " + Generes + " Text , " +
-            release_date + " Text ," + backdrop_path + " Text ," + isSelected + " Text)";
-
-
-
-    public MyDBHelper(Context c) {
-        super(c, db_name, null, dateBase_Version);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(createTableFilm);
-    }
+    //    private String createTableFilm = "Create Table " + filmTableName + "(" + id + " Text PRIMARY KEY" +
+//            ", " + imgUrl + " Text ," + overview + " Text ," +
+//            original_title + " Text, " + vote_average + " Text , " + Generes + " Text , " +
+//            release_date + " Text ," + backdrop_path + " Text ," + isSelected + " Text)";
 //
-//    public void UpdateFilm(int Film_id, String selected) {
+//
+//    public MyDBHelper(Context c) {
+//        super(c, db_name, null, dateBase_Version);
+//    }
+//
+//    @Override
+//    public void onCreate(SQLiteDatabase db) {
+//        db.execSQL(createTableFilm);
+//    }
+//
+//    @Override
+//    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
 //        db = this.getWritableDatabase();
-//        String where = "id ='" + Film_id + "'";
-//        ContentValues cv = new ContentValues();
-//        cv.put(isSelected, selected);
-//        db.update(filmTableName, cv, where, null);
+//        db.execSQL("Drop Table if exists " + filmTableName);
+//        onCreate(db);
 //        db.close();
 //    }
-
-//    public boolean isDB_Empty() {
-//        db = this.getWritableDatabase();
-//        String Query = "Select * from " + filmTableName;
-//        Cursor cursor = db.rawQuery(Query, null);
-//        if (cursor.getCount() <= 0) {
-//            cursor.close();
-//            return true;
-//        }
-//        cursor.close();
-//        db.close();
-//        return false;
-//    }
-
-    //        if(CheckIsDataAlreadyInDBorNot(movieData.getId()))
-    public void insertFilm(Film movieData) {
-        if (movieData.getSelected().equals("1")) {
-            db = this.getWritableDatabase();
-            ContentValues con = new ContentValues();
-            con.put(MyDBHelper.id, movieData.getId());
-            con.put(MyDBHelper.imgUrl, movieData.getPosterPath());
-            con.put(MyDBHelper.overview, movieData.getOverview());
-            con.put(MyDBHelper.original_title, movieData.getTitle());
-            con.put(MyDBHelper.vote_average, movieData.getVoteAverage());
-            con.put(MyDBHelper.release_date, movieData.getReleaseDate());
-            con.put(MyDBHelper.Generes, movieData.getGeneres());
-            con.put(MyDBHelper.backdrop_path, movieData.getBackdropPath());
-            con.put(MyDBHelper.isSelected, movieData.getSelected());
-            db.replace(MyDBHelper.filmTableName, null, con);
-            db.close();
-        } else {
-            db = this.getWritableDatabase();
-            db.delete(MyDBHelper.filmTableName, MyDBHelper.id + "=?", new String[]{String.valueOf(movieData.getId())});
-            db.close();
-        }
-
-    }
-
-
-    public void deleteAll() {
-        db = this.getWritableDatabase();
-        db.execSQL("delete from " + filmTableName);
-        db.close();
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db = this.getWritableDatabase();
-        db.execSQL("Drop Table if exists " + filmTableName);
-        onCreate(db);
-        db.close();
-    }
-
+//
     public List<Film> getFavouriteFilms() {
         List<Film> data = new ArrayList<>();
         db = this.getWritableDatabase();
@@ -136,6 +115,35 @@ public class MyDBHelper extends SQLiteOpenHelper {
         c.close();
         db.close();
         return data;
+    }
+
+    public void insertFilm(Film movieData) {
+        if (movieData.getSelected().equals("1")) {
+            db = this.getWritableDatabase();
+            ContentValues con = new ContentValues();
+            con.put(MyDBHelper.id, movieData.getId());
+            con.put(MyDBHelper.imgUrl, movieData.getPosterPath());
+            con.put(MyDBHelper.overview, movieData.getOverview());
+            con.put(MyDBHelper.original_title, movieData.getTitle());
+            con.put(MyDBHelper.vote_average, movieData.getVoteAverage());
+            con.put(MyDBHelper.release_date, movieData.getReleaseDate());
+            con.put(MyDBHelper.Generes, movieData.getGeneres());
+            con.put(MyDBHelper.backdrop_path, movieData.getBackdropPath());
+            con.put(MyDBHelper.isSelected, movieData.getSelected());
+            db.replace(MyDBHelper.filmTableName, null, con);
+            db.close();
+        } else {
+            db = this.getWritableDatabase();
+            db.delete(MyDBHelper.filmTableName, MyDBHelper.id + "=?", new String[]{String.valueOf(movieData.getId())});
+            db.close();
+        }
+
+    }
+
+    public void deleteAll() {
+        db = this.getWritableDatabase();
+        db.execSQL("delete from " + filmTableName);
+        db.close();
     }
 
 }

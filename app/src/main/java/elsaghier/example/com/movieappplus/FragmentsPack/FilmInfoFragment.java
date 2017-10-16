@@ -1,6 +1,7 @@
 package elsaghier.example.com.movieappplus.FragmentsPack;
 
 
+import android.content.ContentValues;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import elsaghier.example.com.movieappplus.Adapters.CastAdapter;
 import elsaghier.example.com.movieappplus.Adapters.HomeAdapter;
 import elsaghier.example.com.movieappplus.ApiWork.ApiClient;
 import elsaghier.example.com.movieappplus.ApiWork.MovieInterFace;
+import elsaghier.example.com.movieappplus.DataBase.FilmContract;
 import elsaghier.example.com.movieappplus.DataBase.MyDBHelper;
 import elsaghier.example.com.movieappplus.Model.CastModel;
 import elsaghier.example.com.movieappplus.Model.CastResponse;
@@ -147,8 +149,8 @@ public class FilmInfoFragment extends Fragment {
                     addToFav.setImageResource(android.R.drawable.star_big_off);
                     model.setSelected("0");
                 }
-                helper.insertFilm(model);
-
+//                helper.insertFilm(model);
+                insertFilmInContent(model);
                 Snackbar.make(view, FavouriteMessage, BaseTransientBottomBar.LENGTH_LONG)
                         .setAction("Undo", new View.OnClickListener() {
                             @Override
@@ -160,7 +162,8 @@ public class FilmInfoFragment extends Fragment {
                                     addToFav.setImageResource(android.R.drawable.star_big_on);
                                     model.setSelected("1");
                                 }
-                                helper.insertFilm(model);
+//                                helper.insertFilm(model);
+                                insertFilmInContent(model);
                             }
                         })
                         .setActionTextColor(Color.RED)
@@ -168,6 +171,20 @@ public class FilmInfoFragment extends Fragment {
             }
         });
 
+    }
+
+    private void insertFilmInContent(Film model) {
+        ContentValues values = new ContentValues();
+        values.put(FilmContract.FilmEntry.id, model.getId());
+        values.put(FilmContract.FilmEntry.imgUrl, model.getPosterPath());
+        values.put(FilmContract.FilmEntry.overview, model.getOverview());
+        values.put(FilmContract.FilmEntry.original_title, model.getTitle());
+        values.put(FilmContract.FilmEntry.vote_average, model.getVoteAverage());
+        values.put(FilmContract.FilmEntry.release_date, model.getReleaseDate());
+        values.put(FilmContract.FilmEntry.backdrop_path, model.getBackdropPath());
+        values.put(FilmContract.FilmEntry.isSelected, model.getSelected());
+        values.put(FilmContract.FilmEntry.Generes, model.getGeneres());
+        getActivity().getContentResolver().insert(FilmContract.FilmEntry.CONTENT_URI, values);
     }
 
     public void setFilmData() {
