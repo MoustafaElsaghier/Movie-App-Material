@@ -4,9 +4,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,7 +18,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import elsaghier.example.com.movieappplus.Adapters.FilmCursorAdapter;
 import elsaghier.example.com.movieappplus.Adapters.HomeAdapter;
 import elsaghier.example.com.movieappplus.ApiWork.ApiClient;
 import elsaghier.example.com.movieappplus.ApiWork.MovieInterFace;
@@ -34,7 +30,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements NavigationView.OnNavigationItemSelectedListener {
     RecyclerView recyclerView;
     HomeAdapter homeAdapter;
     RecyclerView.LayoutManager recyclerViewLayoutManager;
@@ -45,8 +41,6 @@ public class HomeActivity extends AppCompatActivity
     static List<Film> favouriteFilms;
     Call<FilmsResponse> call;
     TextView ErrorMessages;
-
-    FilmCursorAdapter filmCursorAdapter;
 
 
     @Override
@@ -61,7 +55,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -111,7 +105,7 @@ public class HomeActivity extends AppCompatActivity
             return true;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -137,22 +131,22 @@ public class HomeActivity extends AppCompatActivity
     void init() {
 
         // Navigation Drawer Initialization
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
 
         // variables Intialization
         filmModels = new ArrayList<>();
-        recyclerView = (RecyclerView) findViewById(R.id.posters_recycler);
+        recyclerView = findViewById(R.id.posters_recycler);
         //Change 2 to your choice because here 2 is the number of Grid layout Columns in each row.
         recyclerViewLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
@@ -161,7 +155,7 @@ public class HomeActivity extends AppCompatActivity
 
         myDBHelper = new MyDBHelper(getBaseContext());
         favouriteFilms = new ArrayList<>();
-        ErrorMessages = (TextView) findViewById(R.id.ErrorMessage);
+        ErrorMessages = findViewById(R.id.ErrorMessage);
     }
 
     public void getDataFromNetwork(Call<FilmsResponse> call) {
@@ -194,29 +188,29 @@ public class HomeActivity extends AppCompatActivity
 
     public void getFavFilm_db() {
         favouriteFilms.clear();
-        favouriteFilms = myDBHelper.getFavouriteFilms();
+
+        Cursor data = getContentResolver().query(FilmContract.CONTENT_URI, null, null, null, null);
+        if (data.getCount() > 0) {
+
+            data.moveToFirst();
+            do {
+                Film f = new Film();
+                f.setId(data.getInt(data.getColumnIndex(FilmContract.FilmEntry.id)));
+                f.setPosterPath(data.getString(data.getColumnIndex(FilmContract.FilmEntry.imgUrl)));
+                f.setOverview(data.getString(data.getColumnIndex(FilmContract.FilmEntry.overview)));
+                f.setTitle(data.getString(data.getColumnIndex(FilmContract.FilmEntry.original_title)));
+                f.setVoteAverage(Double.parseDouble(data.getString(data.getColumnIndex(FilmContract.FilmEntry.vote_average))));
+                f.setReleaseDate(data.getString(data.getColumnIndex(FilmContract.FilmEntry.release_date)));
+                f.setBackdropPath(data.getString(data.getColumnIndex(FilmContract.FilmEntry.backdrop_path)));
+                f.setSelected(data.getString(data.getColumnIndex(FilmContract.FilmEntry.isSelected)));
+                f.setGeneres(data.getString(data.getColumnIndex(FilmContract.FilmEntry.Generes)));
+                favouriteFilms.add(f);
+
+            } while (data.moveToNext());
+            homeAdapter = new HomeAdapter(favouriteFilms, this);
+            recyclerView.setAdapter(homeAdapter);
+        }
+
     }
 
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        return new CursorLoader(this,
-                FilmContract.FilmEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        filmCursorAdapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        filmCursorAdapter.swapCursor(null);
-
-    }
 }

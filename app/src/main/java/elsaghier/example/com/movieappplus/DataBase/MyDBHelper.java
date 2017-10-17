@@ -1,6 +1,5 @@
 package elsaghier.example.com.movieappplus.DataBase;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import elsaghier.example.com.movieappplus.Model.Film;
-
 
 
 public class MyDBHelper extends SQLiteOpenHelper {
@@ -25,27 +23,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
             FilmContract.FilmEntry.release_date + " Text ," + FilmContract.FilmEntry.backdrop_path + " Text ," + FilmContract.FilmEntry.isSelected + " Text)";
 
 
-    public MyDBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
 
-    @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
-
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + filmTableName);
-        sqLiteDatabase.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
-                filmTableName + "'");
-
-        // re-create database
-        onCreate(sqLiteDatabase);
-
-    }
 
     private static String db_name = "myMovies";
     private static int dateBase_Version = 1;
@@ -61,29 +39,29 @@ public class MyDBHelper extends SQLiteOpenHelper {
     private static String Generes = "Generes";
     private SQLiteDatabase db;
 
-    //    private String createTableFilm = "Create Table " + filmTableName + "(" + id + " Text PRIMARY KEY" +
-//            ", " + imgUrl + " Text ," + overview + " Text ," +
-//            original_title + " Text, " + vote_average + " Text , " + Generes + " Text , " +
-//            release_date + " Text ," + backdrop_path + " Text ," + isSelected + " Text)";
-//
-//
-//    public MyDBHelper(Context c) {
-//        super(c, db_name, null, dateBase_Version);
-//    }
-//
-//    @Override
-//    public void onCreate(SQLiteDatabase db) {
-//        db.execSQL(createTableFilm);
-//    }
-//
-//    @Override
-//    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-//        db = this.getWritableDatabase();
-//        db.execSQL("Drop Table if exists " + filmTableName);
-//        onCreate(db);
-//        db.close();
-//    }
-//
+        private String createTableFilm = "Create Table " + filmTableName + "(" + id + " Text PRIMARY KEY" +
+            ", " + imgUrl + " Text ," + overview + " Text ," +
+            original_title + " Text, " + vote_average + " Text , " + Generes + " Text , " +
+            release_date + " Text ," + backdrop_path + " Text ," + isSelected + " Text)";
+
+
+    public MyDBHelper(Context c) {
+        super(c, db_name, null, dateBase_Version);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(createTableFilm);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+        db = this.getWritableDatabase();
+        db.execSQL("Drop Table if exists " + filmTableName);
+        onCreate(db);
+        db.close();
+    }
+
     public List<Film> getFavouriteFilms() {
         List<Film> data = new ArrayList<>();
         db = this.getWritableDatabase();
@@ -117,7 +95,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public void insertFilm(Film movieData) {
+    /*public void insertFilm(Film movieData) {
         if (movieData.getSelected().equals("1")) {
             db = this.getWritableDatabase();
             ContentValues con = new ContentValues();
@@ -144,6 +122,6 @@ public class MyDBHelper extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
         db.execSQL("delete from " + filmTableName);
         db.close();
-    }
+    }*/
 
 }

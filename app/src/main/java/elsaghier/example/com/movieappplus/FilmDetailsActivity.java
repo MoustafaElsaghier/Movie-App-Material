@@ -35,7 +35,7 @@ public class FilmDetailsActivity extends AppCompatActivity {
         savedInstanceState = new Bundle();
         init(savedInstanceState);
 
-        poster = (ImageView) findViewById(R.id.FilmPoster);
+        poster = findViewById(R.id.FilmPoster);
         Glide.with(this).load("http://image.tmdb.org/t/p/w185" + film.getBackdropPath()).into(poster);
 
     }
@@ -43,7 +43,7 @@ public class FilmDetailsActivity extends AppCompatActivity {
     public void init(final Bundle savedInstanceState) {
 
         //Toolbar Section
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
 
@@ -64,8 +64,8 @@ public class FilmDetailsActivity extends AppCompatActivity {
         favourite = intent.getBooleanExtra("Favourite", false);
 
         // tab section
-        tableLayout = (TabLayout) findViewById(R.id.tabLayout);
-        viewPager = (ViewPager) findViewById(R.id.ViewPager);
+        tableLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.ViewPager);
 
         // ViewPager Adapter
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {

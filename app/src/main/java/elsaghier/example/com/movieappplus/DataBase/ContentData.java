@@ -3,7 +3,6 @@ package elsaghier.example.com.movieappplus.DataBase;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -16,84 +15,27 @@ import android.support.annotation.Nullable;
 
 public class ContentData extends ContentProvider {
 
-
-    private static final UriMatcher sUriMatcher = buildUriMatcher();
-    private MyDBHelper mOpenHelper;
-
-    // Codes for the UriMatcher //////
-    private static final int Film = 100;
-    private static final int Film_WITH_ID = 200;
-
-
-    private static UriMatcher buildUriMatcher() {
-        // Build a UriMatcher by adding a specific code to return based on a match
-        // It's common to use NO_MATCH as the code for this case.
-        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = FilmContract.CONTENT_AUTHORITY;
-
-        // add a code for each type of URI you want
-        matcher.addURI(authority, FilmContract.FilmEntry.filmTableName, Film);
-        matcher.addURI(authority, FilmContract.FilmEntry.filmTableName + "/#", Film_WITH_ID);
-
-        return matcher;
-    }
-
-
     MyDBHelper dbHelper;
-    private static final String AUTHORITY = "elsaghier.example.com";
-
-    // create content URIs from the authority by appending path to database table
-    public static final Uri CONTENT_URI =
-            Uri.parse("content://" + AUTHORITY + "/films");
-
 
     @Override
     public boolean onCreate() {
         dbHelper = new MyDBHelper(getContext());
-        return false;
+        return true;
     }
 
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
         Cursor retCursor;
-        switch (sUriMatcher.match(uri)) {
-            // All Flavors selected
-            case Film: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        FilmContract.FilmEntry.filmTableName,
-                        strings,
-                        s,
-                        strings1,
-                        null,
-                        null,
-                        s1);
-                return retCursor;
-            }
-            // Individual flavor based on Id selected
-            case Film_WITH_ID: {
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        FilmContract.FilmEntry.filmTableName,
-                        strings,
-                        FilmContract.FilmEntry.id + " = ?",
-                        new String[]{String.valueOf(ContentUris.parseId(uri))},
-                        null,
-                        null,
-                        s1);
-                return retCursor;
-            }
-            default: {
-                // By default, we assume a bad URI
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-            }
-        }
-
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        retCursor = db.query(FilmContract.FilmEntry.filmTableName, strings, s, strings1, null, null, s1);
+        return retCursor;
     }
 
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        final int match = sUriMatcher.match(uri);
+        /*final int match = sUriMatcher.match(uri);
 
         switch (match) {
             case Film: {
@@ -105,39 +47,21 @@ public class ContentData extends ContentProvider {
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
-        }
+        }*/
+        return null;
     }
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        Uri returnUri;
-        switch (sUriMatcher.match(uri)) {
-            case Film: {
-                long _id = db.insert(FilmContract.FilmEntry.filmTableName, null, contentValues);
-                // insert unless it is already contained in the database
-                if (_id > 0) {
-                    returnUri = FilmContract.FilmEntry.buildFlavorsUri(_id);
-                } else {
-                    throw new android.database.SQLException("Failed to insert row into: " + uri);
-                }
-                break;
-            }
-
-            default: {
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-
-            }
-        }
-        getContext().getContentResolver().notifyChange(uri, null);
-        return returnUri;
+        long i = db.insert(FilmContract.FilmEntry.filmTableName, null, contentValues);
+        return ContentUris.withAppendedId(FilmContract.CONTENT_URI, i);
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        /*final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         int numDeleted;
         switch (match) {
@@ -159,13 +83,13 @@ public class ContentData extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        return numDeleted;
-
+        return numDeleted;*/
+        return 0;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        /*final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int numUpdated = 0;
 
         if (contentValues == null) {
@@ -196,7 +120,8 @@ public class ContentData extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
-        return numUpdated;
+        return numUpdated;*/
+        return 0;
     }
 }
 

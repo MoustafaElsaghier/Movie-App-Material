@@ -3,6 +3,7 @@ package elsaghier.example.com.movieappplus.FragmentsPack;
 
 import android.content.ContentValues;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,6 +138,7 @@ public class FilmInfoFragment extends Fragment {
         if (model.getSelected().equals("1"))
             addToFav.setImageResource(android.R.drawable.star_big_on);
 
+
         addToFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -184,7 +187,8 @@ public class FilmInfoFragment extends Fragment {
         values.put(FilmContract.FilmEntry.backdrop_path, model.getBackdropPath());
         values.put(FilmContract.FilmEntry.isSelected, model.getSelected());
         values.put(FilmContract.FilmEntry.Generes, model.getGeneres());
-        getActivity().getContentResolver().insert(FilmContract.FilmEntry.CONTENT_URI, values);
+        Uri uri = getActivity().getContentResolver().insert(FilmContract.CONTENT_URI, values);
+        Log.e("film", uri.toString());
     }
 
     public void setFilmData() {

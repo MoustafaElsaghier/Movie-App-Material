@@ -25,6 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:authorities=" elsaghier.example.com.movieappplus.DataBase"
+            android:name=".DataBase$ContentData"/>
     </application>
 
 </manifest>
