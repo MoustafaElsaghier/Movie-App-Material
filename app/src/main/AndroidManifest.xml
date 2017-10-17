@@ -26,8 +26,8 @@
             </intent-filter>
         </activity>
         <provider
-            android:authorities=" elsaghier.example.com.movieappplus.DataBase"
-            android:name=".DataBase$ContentData"/>
+            android:authorities="elsaghier.example.com.movieappplus.DataBase"
+            android:name=".DataBase.ContentData"/>
     </application>
 
 </manifest>

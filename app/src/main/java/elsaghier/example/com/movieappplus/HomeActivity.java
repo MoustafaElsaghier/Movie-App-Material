@@ -72,11 +72,13 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_popular) {
             getSupportActionBar().setTitle("Popular Movies");
             recyclerView.setAdapter(null);
+            flag = false;
             call = movieInterFace.getPopularMovies(getResources().getString(R.string.api_key));
             getDataFromNetwork(call);
 
         } else if (id == R.id.nav_top_rated) {
             getSupportActionBar().setTitle("Top Rated Movies");
+            flag = false;
 
             recyclerView.setAdapter(null);
             call = movieInterFace.getTopRatedMovies(getResources().getString(R.string.api_key));
@@ -85,6 +87,7 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_now_playing) {
             getSupportActionBar().setTitle("Now Playing Movies");
+            flag = false;
 
             recyclerView.setAdapter(null);
             call = movieInterFace.getNowPlaying(getResources().getString(R.string.api_key));
@@ -93,6 +96,7 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_latest) {
             getSupportActionBar().setTitle("Latest Movies");
+            flag = false;
 
             recyclerView.setAdapter(null);
             call = movieInterFace.getUpComingMovies(getResources().getString(R.string.api_key));
@@ -101,6 +105,7 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_film_favourite) {
             getSupportActionBar().setTitle("Favourite Movies");
+            flag = true;
             refreshFav();
             return true;
         }
@@ -116,15 +121,20 @@ public class HomeActivity extends AppCompatActivity
         refreshFav();
     }
 
+    boolean flag = false;
+
     private void refreshFav() {
         getFavFilm_db();
-        if (favouriteFilms.size() == 0) {
-            findViewById(R.id.ErrorMessage).setVisibility(View.VISIBLE);
-            recyclerView.setAdapter(null);
-        } else {
-            recyclerView.setAdapter(null);
-            homeAdapter = new HomeAdapter(favouriteFilms, this);
-            recyclerView.setAdapter(homeAdapter);
+        if (flag) {
+            if (favouriteFilms.size() == 0) {
+                findViewById(R.id.ErrorMessage).setVisibility(View.VISIBLE);
+                recyclerView.setAdapter(null);
+            } else {
+                recyclerView.setAdapter(null);
+                homeAdapter = new HomeAdapter(favouriteFilms, this);
+                recyclerView.setAdapter(homeAdapter);
+            }
+            flag = false;
         }
     }
 

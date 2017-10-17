@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MovieApp</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
-    <string name="api_key">you_api_key</string>
+    <string name="api_key">50afdb8a06eb4f5d7320f4f4729a993e</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
