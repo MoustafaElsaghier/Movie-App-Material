@@ -148,13 +148,11 @@ public class FilmInfoFragment extends Fragment {
                     model.setSelected("1");
                     FavouriteMessage = "Added To Favourite";
                     insertFilmInContent(model);
-
                 } else {
                     FavouriteMessage = "Removed From Favourite";
                     addToFav.setImageResource(android.R.drawable.star_big_off);
                     model.setSelected("0");
                     deleteFilm(model.getId());
-
                 }
                 Snackbar.make(view, FavouriteMessage, BaseTransientBottomBar.LENGTH_LONG)
                         .setAction("Undo", new View.OnClickListener() {

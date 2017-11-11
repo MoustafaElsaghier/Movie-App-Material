@@ -36,9 +36,10 @@ public class Film implements Serializable {
     @SerializedName("backdrop_path")
     private String backdropPath;
 
-    private String Generes="";
+    private String Generes = "";
 
     public String getGeneres() {
+        Generes = "";
         if (genreIds.size() != 0) {
             for (int i = 0; i < genreIds.size(); ++i)
                 Generes += genreIds.get(i) + ",";
