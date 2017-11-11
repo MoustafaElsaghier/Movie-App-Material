@@ -6,5 +6,5 @@
     <!--<color name="ratingColor">#00d0ff</color>-->
     <color name="movieTittle">#777</color>
     <color name="textColor">#444</color>
-    <color name="cardBackGround">#EEE</color>
+    <color name="cardBackGround">#FFF</color>
 </resources>

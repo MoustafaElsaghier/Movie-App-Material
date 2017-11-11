@@ -11,10 +11,8 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import elsaghier.example.com.movieappplus.Adapters.CastAdapter;
-import elsaghier.example.com.movieappplus.Adapters.HomeAdapter;
+import elsaghier.example.com.movieappplus.Adapters.SimilarAdapter;
 import elsaghier.example.com.movieappplus.ApiWork.ApiClient;
 import elsaghier.example.com.movieappplus.ApiWork.MovieInterFace;
 import elsaghier.example.com.movieappplus.DataBase.FilmContract;
@@ -48,7 +46,7 @@ import static elsaghier.example.com.movieappplus.R.id.fab;
 public class FilmInfoFragment extends Fragment {
 
     Map<Integer, String> genres = new HashMap<>();
-    HomeAdapter SimilarAdapter;
+    SimilarAdapter SimilarAdapter;
     private Film model;
     ImageView backDrop;
     TextView filmName, filmYear, filmRating, filmGenre, filmOverView;
@@ -127,7 +125,7 @@ public class FilmInfoFragment extends Fragment {
         // Third Section
         similarFilms = view.findViewById(R.id.SimilarRecycler);
         similarFilms.setVisibility(View.INVISIBLE);
-        recyclerViewLayoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerViewLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         similarFilms.setLayoutManager(recyclerViewLayoutManager);
 
         movieInterFace = ApiClient.getClient().create(MovieInterFace.class);
@@ -158,7 +156,6 @@ public class FilmInfoFragment extends Fragment {
                     deleteFilm(model.getId());
 
                 }
-//                helper.insertFilm(model);
                 Snackbar.make(view, FavouriteMessage, BaseTransientBottomBar.LENGTH_LONG)
                         .setAction("Undo", new View.OnClickListener() {
                             @Override
@@ -197,7 +194,6 @@ public class FilmInfoFragment extends Fragment {
         values.put(FilmContract.FilmEntry.isSelected, model.getSelected());
         values.put(FilmContract.FilmEntry.Generes, model.getGeneres());
         Uri uri = getActivity().getContentResolver().insert(FilmContract.CONTENT_URI, values);
-        Log.e("film", uri.toString());
     }
 
     public void setFilmData() {
@@ -205,7 +201,7 @@ public class FilmInfoFragment extends Fragment {
         filmYear.setText(model.getReleaseDate());
         filmRating.setText(String.valueOf(model.getVoteAverage()));
         filmOverView.setText(model.getOverview());
-        String listString = "", genere="";
+        String listString = "", genere = "";
         if (b.getBoolean("Fav")) {
             genere = model.getGeneres();
         } else
@@ -215,6 +211,7 @@ public class FilmInfoFragment extends Fragment {
             generesId = genere.split(",");
         else
             generesId = new String[0];
+        listString = "";
         for (int index = 0; index < generesId.length; ++index) {
             int genNum = Integer.parseInt(generesId[index]);
             listString += genres.get(genNum);
@@ -232,6 +229,7 @@ public class FilmInfoFragment extends Fragment {
             public void onResponse(Call<CastResponse> call, Response<CastResponse> response) {
                 cast = response.body().getCast();
                 CastRecycler.setVisibility(View.VISIBLE);
+
                 castAdapter = new CastAdapter(getContext(), cast);
                 CastRecycler.setAdapter(castAdapter);
             }
@@ -251,7 +249,7 @@ public class FilmInfoFragment extends Fragment {
             public void onResponse(@NonNull Call<FilmsResponse> call, @NonNull Response<FilmsResponse> response) {
                 similarFilms.setVisibility(View.VISIBLE);
                 List<Film> data = response.body().getFilms();
-                SimilarAdapter = new HomeAdapter(data, getContext()/*,false*/);
+                SimilarAdapter = new SimilarAdapter(data, getContext());
                 similarFilms.setAdapter(SimilarAdapter);
             }
 
