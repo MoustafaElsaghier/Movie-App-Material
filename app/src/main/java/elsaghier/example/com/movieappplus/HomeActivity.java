@@ -42,7 +42,6 @@ public class HomeActivity extends AppCompatActivity
     Call<FilmsResponse> call;
     TextView ErrorMessages;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,42 +71,42 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.nav_popular) {
             getSupportActionBar().setTitle("Popular Movies");
             recyclerView.setAdapter(null);
-            flag = false;
             call = movieInterFace.getPopularMovies(getResources().getString(R.string.api_key));
+            flag = false;
             getDataFromNetwork(call);
 
         } else if (id == R.id.nav_top_rated) {
             getSupportActionBar().setTitle("Top Rated Movies");
-            flag = false;
-
             recyclerView.setAdapter(null);
             call = movieInterFace.getTopRatedMovies(getResources().getString(R.string.api_key));
+            flag = false;
             getDataFromNetwork(call);
-
 
         } else if (id == R.id.nav_now_playing) {
             getSupportActionBar().setTitle("Now Playing Movies");
-            flag = false;
-
             recyclerView.setAdapter(null);
             call = movieInterFace.getNowPlaying(getResources().getString(R.string.api_key));
+            flag = false;
             getDataFromNetwork(call);
-
 
         } else if (id == R.id.nav_latest) {
             getSupportActionBar().setTitle("Latest Movies");
-            flag = false;
-
             recyclerView.setAdapter(null);
             call = movieInterFace.getUpComingMovies(getResources().getString(R.string.api_key));
+            flag = false;
             getDataFromNetwork(call);
-
 
         } else if (id == R.id.nav_film_favourite) {
             getSupportActionBar().setTitle("Favourite Movies");
+            getFavFilm_db();
             flag = true;
-            refreshFav();
-            return true;
+            if (favouriteFilms.size() == 0) {
+                recyclerView.setAdapter(null);
+                findViewById(R.id.ErrorMessage).setVisibility(View.VISIBLE);
+            } else {
+                homeAdapter = new HomeAdapter(favouriteFilms, this);
+                recyclerView.setAdapter(homeAdapter);
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -115,28 +114,23 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
+    boolean flag = false;
+
     @Override
     protected void onRestart() {
         super.onRestart();
-        refreshFav();
-    }
-
-    boolean flag = false;
-
-    private void refreshFav() {
-        getFavFilm_db();
+        refresh();
         if (flag) {
             if (favouriteFilms.size() == 0) {
+                recyclerView.setAdapter(null);
                 findViewById(R.id.ErrorMessage).setVisibility(View.VISIBLE);
-                recyclerView.setAdapter(null);
             } else {
-                recyclerView.setAdapter(null);
                 homeAdapter = new HomeAdapter(favouriteFilms, this);
                 recyclerView.setAdapter(homeAdapter);
             }
-            flag = false;
         }
     }
+
 
     void init() {
 
@@ -200,6 +194,7 @@ public class HomeActivity extends AppCompatActivity
         favouriteFilms.clear();
 
         Cursor data = getContentResolver().query(FilmContract.CONTENT_URI, null, null, null, null);
+        assert data != null;
         if (data.getCount() > 0) {
 
             data.moveToFirst();
@@ -217,9 +212,8 @@ public class HomeActivity extends AppCompatActivity
                 favouriteFilms.add(f);
 
             } while (data.moveToNext());
-            homeAdapter = new HomeAdapter(favouriteFilms, this);
-            recyclerView.setAdapter(homeAdapter);
         }
+        data.close();
 
     }
 

@@ -137,6 +137,8 @@ public class FilmInfoFragment extends Fragment {
         addToFav = view.findViewById(fab);
         if (model.getSelected().equals("1"))
             addToFav.setImageResource(android.R.drawable.star_big_on);
+        else
+            addToFav.setImageResource(android.R.drawable.btn_star_big_off);
 
 
         addToFav.setOnClickListener(new View.OnClickListener() {
@@ -147,13 +149,16 @@ public class FilmInfoFragment extends Fragment {
                     addToFav.setImageResource(android.R.drawable.star_big_on);
                     model.setSelected("1");
                     FavouriteMessage = "Added To Favourite";
+                    insertFilmInContent(model);
+
                 } else {
                     FavouriteMessage = "Removed From Favourite";
                     addToFav.setImageResource(android.R.drawable.star_big_off);
                     model.setSelected("0");
+                    deleteFilm(model.getId());
+
                 }
 //                helper.insertFilm(model);
-                insertFilmInContent(model);
                 Snackbar.make(view, FavouriteMessage, BaseTransientBottomBar.LENGTH_LONG)
                         .setAction("Undo", new View.OnClickListener() {
                             @Override
@@ -161,12 +166,12 @@ public class FilmInfoFragment extends Fragment {
                                 if (model.getSelected().equals("1")) {
                                     addToFav.setImageResource(android.R.drawable.star_big_off);
                                     model.setSelected("0");
+                                    deleteFilm(model.getId());
                                 } else {
                                     addToFav.setImageResource(android.R.drawable.star_big_on);
                                     model.setSelected("1");
+                                    insertFilmInContent(model);
                                 }
-//                                helper.insertFilm(model);
-                                insertFilmInContent(model);
                             }
                         })
                         .setActionTextColor(Color.RED)
@@ -174,6 +179,10 @@ public class FilmInfoFragment extends Fragment {
             }
         });
 
+    }
+
+    private void deleteFilm(int filmId) {
+        getActivity().getContentResolver().delete(FilmContract.CONTENT_URI, "id=?", new String[]{String.valueOf(filmId)});
     }
 
     private void insertFilmInContent(Film model) {
@@ -196,7 +205,7 @@ public class FilmInfoFragment extends Fragment {
         filmYear.setText(model.getReleaseDate());
         filmRating.setText(String.valueOf(model.getVoteAverage()));
         filmOverView.setText(model.getOverview());
-        String listString = "", genere;
+        String listString = "", genere="";
         if (b.getBoolean("Fav")) {
             genere = model.getGeneres();
         } else

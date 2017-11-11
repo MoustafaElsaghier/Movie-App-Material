@@ -35,19 +35,6 @@ public class ContentData extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        /*final int match = sUriMatcher.match(uri);
-
-        switch (match) {
-            case Film: {
-                return FilmContract.FilmEntry.CONTENT_DIR_TYPE;
-            }
-            case Film_WITH_ID: {
-                return FilmContract.FilmEntry.CONTENT_ITEM_TYPE;
-            }
-            default: {
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-            }
-        }*/
         return null;
     }
 
@@ -61,67 +48,14 @@ public class ContentData extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        /*final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
-        int numDeleted;
-        switch (match) {
-            case Film:
-                numDeleted = db.delete(
-                        FilmContract.FilmEntry.filmTableName, s, strings);
-                // reset _ID
-                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
-                        FilmContract.FilmEntry.filmTableName + "'");
-                break;
-            case Film_WITH_ID:
-                numDeleted = db.delete(FilmContract.FilmEntry.filmTableName,
-                        FilmContract.FilmEntry.id + " = ?",
-                        new String[]{String.valueOf(ContentUris.parseId(uri))});
-                // reset _ID
-                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
-                        FilmContract.FilmEntry.filmTableName + "'");
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
-        return numDeleted;*/
-        return 0;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.delete(FilmContract.FilmEntry.filmTableName, s, strings);
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        /*final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int numUpdated = 0;
-
-        if (contentValues == null) {
-            throw new IllegalArgumentException("Cannot have null content values");
-        }
-
-        switch (sUriMatcher.match(uri)) {
-            case Film: {
-                numUpdated = db.update(FilmContract.FilmEntry.filmTableName,
-                        contentValues,
-                        s,
-                        strings);
-                break;
-            }
-            case Film_WITH_ID: {
-                numUpdated = db.update(FilmContract.FilmEntry.filmTableName,
-                        contentValues,
-                        FilmContract.FilmEntry.id + " = ?",
-                        new String[]{String.valueOf(ContentUris.parseId(uri))});
-                break;
-            }
-            default: {
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-            }
-        }
-
-        if (numUpdated > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
-
-        return numUpdated;*/
-        return 0;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.update(FilmContract.FilmEntry.filmTableName, contentValues, s, strings);
     }
 }
 
