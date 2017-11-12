@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.FloatingActionButton;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import elsaghier.example.com.movieappplus.Adapters.CastAdapter;
-import elsaghier.example.com.movieappplus.Adapters.SimilarAdapter;
 import elsaghier.example.com.movieappplus.ApiWork.ApiClient;
 import elsaghier.example.com.movieappplus.ApiWork.MovieInterFace;
 import elsaghier.example.com.movieappplus.DataBase.FilmContract;
@@ -46,12 +44,11 @@ import static elsaghier.example.com.movieappplus.R.id.fab;
 public class FilmInfoFragment extends Fragment {
 
     Map<Integer, String> genres = new HashMap<>();
-    SimilarAdapter SimilarAdapter;
     private Film model;
     ImageView backDrop;
     TextView filmName, filmYear, filmRating, filmGenre, filmOverView;
 
-    RecyclerView CastRecycler, similarFilms;
+    RecyclerView CastRecycler;
     RecyclerView.LayoutManager recyclerViewLayoutManager;
     CastAdapter castAdapter;
     FloatingActionButton addToFav;
@@ -79,7 +76,6 @@ public class FilmInfoFragment extends Fragment {
         setFilmData();
         // Second Section data (Cast)
         getCastData();
-        getSimilarMovies();
         return view;
     }
 
@@ -122,11 +118,6 @@ public class FilmInfoFragment extends Fragment {
         CastRecycler.setLayoutManager(recyclerViewLayoutManager);
 
 
-        // Third Section
-        similarFilms = view.findViewById(R.id.SimilarRecycler);
-        similarFilms.setVisibility(View.INVISIBLE);
-        recyclerViewLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        similarFilms.setLayoutManager(recyclerViewLayoutManager);
 
         movieInterFace = ApiClient.getClient().create(MovieInterFace.class);
         helper = new MyDBHelper(getContext());
@@ -239,23 +230,6 @@ public class FilmInfoFragment extends Fragment {
         });
     }
 
-    public void getSimilarMovies() {
-        SimilarCall = movieInterFace.getSimilarMovies("movie/" + String.valueOf(model.getId() + "/similar"), getResources().getString(R.string.api_key));
-        SimilarCall.enqueue(new Callback<FilmsResponse>() {
 
-            @Override
-            public void onResponse(@NonNull Call<FilmsResponse> call, @NonNull Response<FilmsResponse> response) {
-                similarFilms.setVisibility(View.VISIBLE);
-                List<Film> data = response.body().getFilms();
-                SimilarAdapter = new SimilarAdapter(data, getContext());
-                similarFilms.setAdapter(SimilarAdapter);
-            }
-
-            @Override
-            public void onFailure(Call<FilmsResponse> call, Throwable t) {
-                System.out.println("FALSE" + t.getMessage());
-            }
-        });
-    }
 
 }

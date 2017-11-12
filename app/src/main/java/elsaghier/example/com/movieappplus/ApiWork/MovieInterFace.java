@@ -32,7 +32,5 @@ public interface MovieInterFace {
     @GET
     Call<ReviewResponse> getFilmReviews(@Url String movieId, @Query("api_key") String apiKey);
 
-    @GET
-    Call<FilmsResponse> getSimilarMovies(@Url String movieId, @Query("api_key") String apiKey);
 
 }
